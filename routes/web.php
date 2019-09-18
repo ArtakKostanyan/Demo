@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Jenssegers\Agent\Agent;
 Route::post('post/accept/{post}','PostController@accept')->name('post.accept');
-
 Route::resource('post','PostController');
 
 Route::get('/', function (Request $request) {
@@ -31,5 +30,11 @@ Route::get('/', function (Request $request) {
 Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home')->middleware('verified');
+Route::get('/user', 'UserController@index')->name('user');
+Route::get('/chat/{user}', 'ChatController@index')->name('chat.index');
+Route::post('/chat/{user}', 'ChatController@newChat')->name('chat.new');
+
+
+
 
 
