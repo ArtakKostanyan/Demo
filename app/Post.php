@@ -39,4 +39,10 @@ class Post extends Model
         return $this->status()->count() === 3 ? true : false;
     }
 
+
+    public function comments(){
+
+        return $this->hasMany(Comment::class);
+    }
+
 }

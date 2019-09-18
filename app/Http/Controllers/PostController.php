@@ -9,6 +9,7 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class PostController extends Controller
 {
@@ -19,6 +20,8 @@ class PostController extends Controller
      */
     public function index()
     {
+
+
         if (\auth()->user()->isAdmin()){
 
             $posts = Post::all();
@@ -77,6 +80,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         if (Auth::user()->can('view',$post)) {
+
 
             return view('posts.show', compact('post'));
         }else{

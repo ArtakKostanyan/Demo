@@ -21,28 +21,24 @@ class ChatController extends Controller
         if ($this->check($user)) {
 
             $chats = Chat::where('from_id', $user->id)->where('to_id', auth()->user()->id)->get();
+
         } else {
 
-            return redirect('user')->with('sorry','You can`t chat with that user');
+            return redirect('user')->with('sorry', 'You can`t chat with that user');
         }
 
 
         return view('chat.index', compact('user', 'chats'));
     }
 
-    public function newChat(Request $request,User $user)
+    public function newChat(Request $request, User $user)
     {
-
-
-
         $chat = Chat::create([
 
             'from_id' => auth()->user()->id,
-            'to_id' =>$user->id,//$request->to,
+            'to_id' => $user->id,//$request->to,
             'message' => $request->chat
-
         ]);
-
 
         return back();
     }
