@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Post;
 use App\PostStatus;
+use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,10 +19,15 @@ class PostController extends Controller
      */
     public function index()
     {
+        if (\auth()->user()->isAdmin()){
 
-        $posts = Post::all();
+            $posts = Post::all();
+            return view('posts.index', compact('posts'));
+        }else{
 
-        return view('posts.index',compact('posts'));
+            return  redirect('/');
+        }
+
     }
 
     /**
@@ -31,7 +38,9 @@ class PostController extends Controller
     public function create()
     {
 
-        return view('posts.create');
+           return view('posts.create');
+          // return back()->with('error', 'dont have permissions');
+
     }
 
     /**
@@ -49,12 +58,12 @@ class PostController extends Controller
 
         $post['user_id'] = Auth::user()->id;
         $newPost = Post::create($post);
-        PostStatus::create([
-
-            'post_id' => $newPost->id,
-            'user_id' => $newPost->user_id
-
-        ]);
+//        PostStatus::firstOrCreate([
+//
+//            'post_id' => $newPost->id,
+//            'user_id' => $newPost->user_id
+//
+//        ]);
 
         return back();
     }
@@ -62,38 +71,44 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     *
+     * @param Post $post
      * @return \Illuminate\Http\Response
      */
     public function show(Post $post)
     {
-        return view('posts.show', compact('post'));
+        if (Auth::user()->can('view',$post)) {
+
+            return view('posts.show', compact('post'));
+        }else{
+
+            abort(404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
-     *
+     * @param Post $post
      * @return \Illuminate\Http\Response
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
-     *
-     * @return \Illuminate\Http\Response
+     * @param Post $post
+     * @return void
      */
-    public function update(Request $request, $id)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+
+        $post->update($request->all());
+
+        return redirect('post');
     }
 
     /**
@@ -103,8 +118,35 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+
+        $post->delete();
+
+        return redirect('post');
+    }
+
+    public function accept( Post $post)
+    {
+
+//        dd($post->acceptFirst(\auth()->user()));
+//        if ( $post->acceptFirst()){
+//
+//
+//        }
+
+        PostStatus::firstOrCreate([
+
+             'post_id' => $post->id,
+             'user_id' => \auth()->user()->id,
+             'status'=> 1
+        ]);
+
+
+//        $postStatus = PostStatus::where('post_id', $post->id)->where('status', 0)->first();
+//        $postStatus->status = request()->has('accept') ? 1 : 0;
+//        $postStatus->save();
+
+        return back()->with('accept', 'OK');
     }
 }

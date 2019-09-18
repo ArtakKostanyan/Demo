@@ -6,19 +6,37 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-     protected $fillable=[
-         'title','body','user_id'
-     ];
+    protected $fillable = [
+        'title', 'body', 'user_id'
+    ];
 
-            public function status(){
+    public function status()
+    {
+        return $this->hasMany(PostStatus::class)->where('status', 1);
+    }
 
-                return $this->hasMany(PostStatus::class)->where('status',1);
-            }
+    public function postStatus(){
 
-
-    public function statusInfo(){
-
-              return $this->status()->count()===3 ? "Approved":"Pending";
+        return $this->hasMany(PostStatus::class);
 
     }
+
+    public function statusInfo()
+    {
+
+        return $this->status()->count() === 3 ? "Approved" : "Pending";
+
+    }
+
+
+    public function acceptFirst(User $user) : bool {
+
+      return  !! PostStatus::where( 'user_id',$user->id)->where('post_id',$this->id)->first();
+    }
+
+    public function isPublic(){
+
+        return $this->status()->count() === 3 ? true : false;
+    }
+
 }

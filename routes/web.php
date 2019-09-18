@@ -16,8 +16,10 @@ use App\Mail\OsInfoMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Jenssegers\Agent\Agent;
+Route::post('post/accept/{post}','PostController@accept')->name('post.accept');
 
 Route::resource('post','PostController');
+
 Route::get('/', function (Request $request) {
 //    $agent=new Jenssegers\Agent\Agent();
 //    Mail::to(auth()->user())
