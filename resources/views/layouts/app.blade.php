@@ -80,5 +80,7 @@
             @yield('content')
         </main>
     </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+@yield('scripts')
 </body>
 </html>

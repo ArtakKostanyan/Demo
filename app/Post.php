@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Redis;
 
 class Post extends Model
 {
@@ -43,6 +44,27 @@ class Post extends Model
     public function comments(){
 
         return $this->hasMany(Comment::class);
+    }
+
+
+    public function dislike(User $user){
+        $redis = Redis::connection();
+        $redis->srem("post{$this->id}:likes", $user->id);
+        $redis->srem("user{$user->id}:likes", $this->id);
+    }
+
+    public function like(User $user){
+
+        $redis = Redis::connection();
+        $redis->sadd("user{$user->id}:likes", $this->id);
+        $redis->sadd("post{$this->id}:likes", $user->id);
+    }
+
+
+    public function likeCount( ){
+
+        $redis = Redis::connection();
+        return $redis->scard("post{$this->id}:likes");
     }
 
 }

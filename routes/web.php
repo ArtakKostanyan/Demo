@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Jenssegers\Agent\Agent;
 Route::post('post/accept/{post}','PostController@accept')->name('post.accept');
+Route::post('post/like/{post}','PostController@likePost')->name('post.like');
+Route::post('post/dislike/{post}','PostController@dislikePost')->name('post.dislike');
 Route::resource('post','PostController');
 
 Route::get('/', function (Request $request) {
@@ -33,6 +35,8 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('verified'
 Route::get('/user', 'UserController@index')->name('user');
 Route::get('/chat/{user}', 'ChatController@index')->name('chat.index');
 Route::post('/chat/{user}', 'ChatController@newChat')->name('chat.new');
+
+Route::post('/post/{id}/comment', 'CommentController@store')->name('comment.store');
 
 
 

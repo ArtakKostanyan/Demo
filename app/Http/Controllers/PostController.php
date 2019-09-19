@@ -81,8 +81,7 @@ class PostController extends Controller
     {
         if (Auth::user()->can('view',$post)) {
 
-
-            return view('posts.show', compact('post'));
+            return view('posts.show')->with(['post'=>$post]);
         }else{
 
             abort(404);
@@ -118,9 +117,9 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     *
+     * @param Post $post
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Post $post)
     {
@@ -132,25 +131,30 @@ class PostController extends Controller
 
     public function accept( Post $post)
     {
-
-//        dd($post->acceptFirst(\auth()->user()));
-//        if ( $post->acceptFirst()){
-//
-//
-//        }
-
         PostStatus::firstOrCreate([
 
              'post_id' => $post->id,
              'user_id' => \auth()->user()->id,
              'status'=> 1
         ]);
-
-
-//        $postStatus = PostStatus::where('post_id', $post->id)->where('status', 0)->first();
-//        $postStatus->status = request()->has('accept') ? 1 : 0;
-//        $postStatus->save();
-
         return back()->with('accept', 'OK');
     }
+
+
+
+
+    public function likePost(Request $request,Post $post){
+
+        $user = \auth()->user();
+        $post->like($user);
+        return response()->json(['success'=>true,'postlike'=>$post->likeCount()]);
+    }
+
+    public function dislikePost(Request $request,Post $post){
+
+        $user = \auth()->user();
+        $post->dislike($user);
+        return response()->json(['success'=>true,'dislike'=>$post->likeCount()]);
+    }
+
 }
