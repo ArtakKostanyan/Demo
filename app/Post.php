@@ -67,4 +67,10 @@ class Post extends Model
         return $redis->scard("post{$this->id}:likes");
     }
 
+    public function isLikedBY(User $user){
+
+        $redis = Redis::connection();
+       return $redis->sismember("post{$this->id}:likes", $user->id);
+    }
+
 }

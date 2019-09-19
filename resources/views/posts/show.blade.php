@@ -13,10 +13,13 @@
                         <p>
                             {{ $post->body }}
                         </p>
-                        Like:<span class="like">{{$post->likeCount()}}</span>
-                        <img id="like" style="cursor: pointer" data-like="{{$post->id}}" src="{{asset('/images/like.svg')}}" width="28px" alt="like">
-                        <img id="dislike" style="cursor: pointer" data-dislike="{{$post->id}}" src="{{asset('/images/dislike.svg')}}" width="28px" alt="dislike">
-                        <hr/>
+                        Like:<span class="like">{{$post->likeCount()}}</span><br><br>
+
+                            <img class="{{ $post->isLikedBY(Auth::user()) ? '' : 'd-none' }}" id="dislike" style="cursor: pointer" data-dislike="{{$post->id}}" src="{{asset('/images/dislike.svg')}}" width="28px" alt="dislike">
+
+                            <img class="  {{$post->isLikedBY(Auth::user()) ? 'd-none' : ''}}  " id="like" style="cursor: pointer" data-like="{{$post->id}}" src="{{asset('/images/like.svg')}}" width="28px" alt="like">
+
+                            <hr/>
                         <h2>Comments</h2>
 
 
@@ -78,7 +81,8 @@
                     data:{post_id:post},
                     success:function(data){
                         if (data.success) {
-                            like.html(data.dislike)
+                            like.html(data.dislike);
+
                         }
                         console.log(data.dislike);
                     }
